@@ -174,7 +174,8 @@ is $t->app->start(qw(test_command --to)), 'works too!', 'right result';
 
 # Plugin::Test::SomePlugin2::register (security violation)
 $t->get_ok('/plugin-test-some_plugin2/register')->status_isnt(500)
-  ->status_is(404)->header_is(Server => 'Mojolicious (Perl)')
+  ->status_is(404)->status_error()
+  ->header_is(Server => 'Mojolicious (Perl)')
   ->content_unlike(qr/Something/)->content_like(qr/Page not found/);
 
 # Plugin::Test::SomePlugin2::register (security violation again)
@@ -182,7 +183,8 @@ $t->app->log->level('debug')->unsubscribe('message');
 my $log = '';
 my $cb  = $t->app->log->on(message => sub { $log .= pop });
 $t->get_ok('/plugin-test-some_plugin2/register')->status_isnt(500)
-  ->status_is(404)->header_is(Server => 'Mojolicious (Perl)')
+  ->status_is(404)->status_error()
+  ->header_is(Server => 'Mojolicious (Perl)')
   ->content_unlike(qr/Something/)->content_like(qr/Page not found/);
 like $log,
   qr/Class "MojoliciousTest::Plugin::Test::SomePlugin2" is not a controller/,
@@ -194,6 +196,7 @@ my $url = $t->ua->server->url;
 $url->path('/fun/time');
 $t->get_ok($url => {'X-Test' => 'Hi there!'})->status_isnt(404)->status_is(200)
   ->status_is(200, 'with description')->status_isnt(500)
+  ->status_between(200, 201)->status_success()
   ->status_isnt(500, 'with description')->header_is('X-Bender' => undef)
   ->header_is(Server => 'Mojolicious (Perl)')
   ->header_is(Server => 'Mojolicious (Perl)', 'with description')
@@ -245,7 +248,7 @@ $t->get_ok('/foo/yada')->status_is(200)
   ->content_like(qr/look ma! no action!/);
 
 # SyntaxError::foo (syntax error in controller)
-$t->get_ok('/syntax_error/foo')->status_is(500)
+$t->get_ok('/syntax_error/foo')->status_is(500)->status_error()
   ->header_is(Server => 'Mojolicious (Perl)')
   ->content_like(qr/Missing right curly/);
 

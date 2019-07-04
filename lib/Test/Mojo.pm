@@ -308,6 +308,26 @@ sub status_isnt {
     _desc($desc, "not $status " . $self->tx->res->default_message($status)));
 }
 
+sub status_between {
+  my ($self, $status_l, $status_h, $desc) = @_;
+  return $self->_test('cmp_ok', $self->tx->res->code, '>=',
+    $status_l,
+    _desc($desc, ">= $status_l " . $self->tx->res->default_message($status_l)))
+  && $self->_test('cmp_ok', $self->tx->res->code, '<=',
+    $status_h,
+    _desc($desc, "<= $status_h " . $self->tx->res->default_message($status_h)));
+}
+
+sub status_success {
+  my ($self, $desc) = @_;
+    return $self->status_between(200, 299, $desc);
+}
+
+sub status_error {
+  my ($self, $desc) = @_;
+    return $self->status_between(400, 599, $desc);
+}
+
 sub text_is {
   my ($self, $selector, $value, $desc) = @_;
   return $self->_test('is', $self->_text($selector),
