@@ -1,0 +1,24 @@
+---
+name: test-hypnotoad
+
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os:
+          - 'tumbleweed'
+          - 'leap'
+          - 'debian'
+          - 'ubuntu'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: t
+        run: |
+          podman build -f t/hypnotoad/Dockerfile.${{ matrix.os }} .

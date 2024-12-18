@@ -1,0 +1,12 @@
+from tumbleweed
+
+run zypper -nvvv in perl git-core
+
+workdir /opt
+
+run git clone https://github.com/mojolicious/mojo
+workdir /opt/mojo
+
+copy t/mojo/hypnotoad-environ.t t/mojo
+
+run TEST_HYPNOTOAD=1 prove -l t/mojo/hypnotoad-environ.t

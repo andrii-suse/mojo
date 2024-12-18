@@ -1,0 +1,13 @@
+from debian
+
+run apt update && DEBIAN_FRONTEND=noninteractive apt -y install perl-base git bsdmainutils
+
+workdir /opt
+
+run git clone https://github.com/mojolicious/mojo
+workdir /opt/mojo
+
+copy t/mojo/hypnotoad-environ.t t/mojo
+
+run TEST_HYPNOTOAD=1 prove -l t/mojo/hypnotoad-environ.t
+
